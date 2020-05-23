@@ -16,12 +16,17 @@ class GUI:
         self.font2 = Font(family="Arial", size=10)
         self.font3 = Font(family="굴림",size=12)
 
-        Label(text="전기자동차 공공충전소 현황", font=self.font1).pack()
+        Label(self.window,text="전기자동차 공공충전소 현황", font=self.font1).pack()
         self.initButton()
         self.initListBox()
-        self.mapLabel=Label(text='이곳에 지도가 그려질 예정입니다.',font=self.font1,bg='white')
+        self.imgTempMap = Image.open("img/tempMap.png")
+        self.photoTempMap = ImageTk.PhotoImage(self.imgTempMap)
+        Label(self.window,image=self.photoTempMap).place(x=350, y=100)
+        Label(self.window,text="지도",font=self.font3).place(x=550,y=350)
         #지도는 html frame이라는걸 사용하면 될 것 같습니다.
-        self.mapLabel.place(x=350, y=100)
+        self.eMailEntry=Entry(self.window)
+        self.eMailEntry.place(x=10,y=160,width=200)
+        Label(self.window,text="메일 주소 입력",font=self.font3).place(x=10,y=180)
         self.window.mainloop()
 
     def initButton(self):
@@ -43,7 +48,7 @@ class GUI:
 
     def initListBox(self):
         self.frame1 = Frame(self.window)
-        self.frame1.place(x=10, y=200)
+        self.frame1.place(x=10, y=220)
         self.locationListBox = Listbox(self.frame1, selectmode='extended',
                                        height=7, font=self.font2,
                                        relief='ridge', borderwidth=7)
@@ -55,7 +60,7 @@ class GUI:
 
         for i in range(len(xmlProcessing.locations)):
             self.locationListBox.insert(i, xmlProcessing.locations[i])
-        Label(self.window,text="지역 리스트",font=self.font3).place(x=40,y=340)
+        Label(self.window,text="지역 리스트",font=self.font3).place(x=40,y=360)
         # 여기까지 지역 리스트 만드는 코드
 
         self.frame2 = Frame(self.window)
