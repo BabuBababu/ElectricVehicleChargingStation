@@ -5,26 +5,9 @@ from xml.etree import ElementTree
 locations = ['서울특별시', '인천광역시', '대전광역시', '대구광역시', '울산광역시', '부산광역시', '광주광역시', '세종특별자치시',
              '경기도', '강원도', '충청북도', '충청남도', '전라북도', '전라남도', '경상북도', '경상남도']
 
+chargingStations=[set() for i in range(len(locations))]
 
 class Data:
-    chargingStations=[set() for i in range(len(locations))]
-    seoulStation = set()
-    incheonStation = set()
-    daejeonStation = set()
-    daeguStation = set()
-    ulsanStation = set()
-    pusanStation = set()
-    gwangjuStation = set()
-    sejongStation = set()
-    gyeonggiStation = set()
-    gangwonStation = set()
-    nChungcheongStation = set()
-    sChungcheongStation = set()
-    nJeollaStation = set()
-    sJeollaStatio = set()
-    nGyeongsangStation = set()
-    sGyeongsangStation = set()
-
     def __init__(self, address, stationID, stationName, lat, lng, useTime, type, stat):
         self.address = address
         self.stationID = stationID
@@ -46,8 +29,8 @@ class Data:
 
     def printData(self):
         print("지역:{0}\t충전소 이름:{1},\t충전소 ID:{2}\t경도:{3}\t위도:{4}\t사용가능시간:{5}".format(self.address, self.stationName,
-                                                                                   self.stationID,
-                                                                                   self.lng, self.lat, self.useTime))
+                                                                                    self.stationID,
+                                                                                    self.lng, self.lat, self.useTime))
 
     def __eq__(self, other):
         if not isinstance(other, type(self)): return NotImplemented
@@ -65,6 +48,7 @@ url = "http://open.ev.or.kr:8080/openapi/services/rest/EvChargerService?serviceK
 
 
 def createXmlDoc():
+    global xmlDocument
     req = urllib.request.Request(url)
     resp = urllib.request.urlopen(req)
     responseBody = resp.read()
@@ -72,10 +56,11 @@ def createXmlDoc():
 
 
 def parseStationInfo():
+    global xmlDocument
     tree = ElementTree.fromstring(xmlDocument.toxml())
     items = tree.getiterator("item")
 
-    for i in len(locations):
+    for i in range(len(locations)):
         for item in items:
             address = item.find("addrDoro")
             if locations[i] in address.text:  # 여기에 원하는 지역을 입력하면 해당 지역의 충전소를 셋에 집어넣습니다.
@@ -86,10 +71,14 @@ def parseStationInfo():
                 useTime = item.find("useTime")
                 chgerType = item.find("chgerType")
                 stat = item.find("stat")
-                Data.chargingStations[i].add(Data(address.text, stationID.text, stationName.text, lng.text, lat.text, useTime.text,
+                chargingStations[i].add(Data(address.text, stationID.text, stationName.text, lng.text, lat.text, useTime.text,
                          chgerType.text, stat.text))
     print("complete")
 
+def printSeoulData():
+    for i in chargingStations[0]:
+        i.printData()
 
 def deleteDoc():
+    global xmlDocument
     del xmlDocument
