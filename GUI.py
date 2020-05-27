@@ -2,6 +2,9 @@ from tkinter import *
 from tkinter.font import Font
 from PIL import Image, ImageTk
 import xmlProcessing
+import smtplib
+from email.mime.text import MIMEText
+from tkinter import messagebox
 
 
 class GUI:
@@ -24,7 +27,9 @@ class GUI:
         Label(self.window, image=self.photoTempMap).place(x=350, y=100)
         Label(self.window, text="지도", font=self.font3).place(x=550, y=350)
         # 지도는 html frame이라는걸 사용하면 될 것 같습니다.
-        self.eMailEntry = Entry(self.window)
+
+        self.MailIDinBox = StringVar()
+        self.eMailEntry = Entry(self.window,textvariable= self.MailIDinBox)
         self.eMailEntry.place(x=10, y=160, width=200)
         Label(self.window, text="메일 주소 입력", font=self.font3).place(x=10, y=180)
         self.window.mainloop()
@@ -38,7 +43,7 @@ class GUI:
         self.photo3 = ImageTk.PhotoImage(self.img3)
         self.searchButton = Button(image=self.photo1, command=self.getStationList)
         self.specifiedSearchButton = Button(image=self.photo2, command=self.getSpecificInfo)
-        self.sendMailButton = Button(image=self.photo3)
+        self.sendMailButton = Button(image=self.photo3, command=self.SendMail)
         self.searchButton.place(x=10, y=50)
         Label(text="검색").place(x=30, y=130)
         self.specifiedSearchButton.place(x=10 + 64 + 15, y=50)
@@ -114,6 +119,24 @@ class GUI:
         self.specificInfoList.insert(4, "충전소 위도: " + tempObj.lng)
         self.specificInfoList.insert(5, "충전기 타입: " + tempObj.type)
         self.specificInfoList.insert(6, "충전소 상태: " + tempObj.stat)
+
+    def SendMail(self):
+        tempList = list(xmlProcessing.chargingStations[self.curSelectedLoc])
+        tempObj = tempList[self.stationListBox.curselection()[0]]
+
+        s = smtplib.SMTP('smtp.gmail.com', 587)
+        s.starttls()
+        s.login('poryou66@gmail.com', 'ftpzebchlgswtqzh')
+
+        # 세부사항 내용을 가져와서 집어 넣기
+        msg = MIMEText("주소: "+ tempObj.address + "\n 충전소ID: " + tempObj.stationID + "\n 충전소 이름: " + tempObj.stationName
+                       +"\n 충전기 타입: " + tempObj.type +"\n 충전소 상태: " + tempObj.stat)
+        msg['Subject'] = "****요청하신 "+ tempObj.stationName + "충전소의 정보 입니다.****"
+
+        s.sendmail("poryou66@gmail.com",self.MailIDinBox.get() , msg.as_string())
+        s.quit()
+        messagebox.showinfo( "메일 전송 완료",self.MailIDinBox.get() + "로 성공적으로 전송을 완료하였습니다!")
+
 
     def __del__(self):
         xmlProcessing.deleteDoc()
