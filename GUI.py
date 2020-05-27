@@ -124,17 +124,17 @@ class GUI:
         tempList = list(xmlProcessing.chargingStations[self.curSelectedLoc])
         tempObj = tempList[self.stationListBox.curselection()[0]]
 
-        s = smtplib.SMTP('smtp.gmail.com', 587)
-        s.starttls()
-        s.login('poryou66@gmail.com', 'ftpzebchlgswtqzh')
+        HostMail = smtplib.SMTP('smtp.gmail.com', 587)
+        HostMail.starttls()
+        HostMail.login('poryou66@gmail.com', 'ftpzebchlgswtqzh')
 
         # 세부사항 내용을 가져와서 집어 넣기
         msg = MIMEText("주소: "+ tempObj.address + "\n 충전소ID: " + tempObj.stationID + "\n 충전소 이름: " + tempObj.stationName
                        +"\n 충전기 타입: " + tempObj.type +"\n 충전소 상태: " + tempObj.stat)
         msg['Subject'] = "****요청하신 "+ tempObj.stationName + "충전소의 정보 입니다.****"
 
-        s.sendmail("poryou66@gmail.com",self.MailIDinBox.get() , msg.as_string())
-        s.quit()
+        HostMail.sendmail("poryou66@gmail.com",self.MailIDinBox.get() , msg.as_string())
+        HostMail.quit()
         messagebox.showinfo( "메일 전송 완료",self.MailIDinBox.get() + "로 성공적으로 전송을 완료하였습니다!")
 
 
