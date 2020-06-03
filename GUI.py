@@ -66,7 +66,7 @@ class GUI:
         for i in range(len(xmlProcessing.locations)):
             self.locationListBox.insert(i, xmlProcessing.locations[i])
         Label(self.window, text="지역 리스트", font=self.font3).place(x=40, y=360)
-        # 여기까지 지역 리스트 만드는 코드
+        # 여기까지 지역 리스트 만드는 코드(서울 ~ 제주도까지 하나씩 집어넣는다.)
 
         self.frame2 = Frame(self.window)
         self.frame2.place(x=10, y=400)
@@ -98,20 +98,20 @@ class GUI:
 
     def getStationList(self):
         # 리스트 박스의 curselection 메소드는 튜플의 형태로 반환함. 즉 첫번째 값에 인덱스 값이 들어있음!
-        self.stationListBox.delete(0, 'end')
+        self.stationListBox.delete(0, 'end')#해당 지역을 선택하면 기존의 충전소 정보가 싹 제거된다.
         index = 0
         self.curSelectedLoc = self.locationListBox.curselection()[0]
         for i in xmlProcessing.chargingStations[self.curSelectedLoc]:
-            self.stationListBox.insert(index, i.stationName)
+            self.stationListBox.insert(index, i.stationName)#그 다음 해당 지역 충전소를 하나씩 리스트박스에 삽입한다.
             index += 1
 
     def getSpecificInfo(self):
-        self.specificInfoList.delete(0, 'end')
+        self.specificInfoList.delete(0, 'end')#세부 정보도 마찬가지로 기존의 리스트를 싹 비우고
 
         tempList = list(xmlProcessing.chargingStations[self.curSelectedLoc])
 
         tempObj = tempList[self.stationListBox.curselection()[0]]
-
+        #정보를 하나씩 삽입한다.
         self.specificInfoList.insert(0, "주소: " + tempObj.address)
         self.specificInfoList.insert(1, "충전소ID: " + tempObj.stationID)
         self.specificInfoList.insert(2, "충전소 이름: " + tempObj.stationName)
