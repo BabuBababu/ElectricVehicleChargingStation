@@ -12,6 +12,7 @@ class GUI:
         self.curSelectedLoc = None
         xmlProcessing.createXmlDoc()
         xmlProcessing.parseStationInfo()
+        xmlProcessing.sortChargingStations()
         self.window = Tk()
         self.window.title("전기자동차 공공충전소 현황")
         self.window.geometry("800x600")
