@@ -5,7 +5,8 @@ import xmlProcessing
 import smtplib
 from email.mime.text import MIMEText
 from tkinter import messagebox
-
+import folium
+import webbrowser
 
 class GUI:
     def __init__(self):
@@ -13,6 +14,9 @@ class GUI:
         xmlProcessing.createXmlDoc()
         xmlProcessing.parseStationInfo()
         xmlProcessing.sortChargingStations()
+        self.lat = 0
+        self.lng = 0
+        self.stnName=""
         self.window = Tk()
         self.window.title("전기자동차 공공충전소 현황")
         self.window.geometry("800x600")
@@ -23,14 +27,13 @@ class GUI:
         Label(self.window, text="전기자동차 공공충전소 현황", font=self.font1).pack()
         self.initButton()
         self.initListBox()
-        self.imgTempMap = Image.open("img/tempMap.png")
-        self.photoTempMap = ImageTk.PhotoImage(self.imgTempMap)
-        Label(self.window, image=self.photoTempMap).place(x=350, y=100)
-        Label(self.window, text="지도", font=self.font3).place(x=550, y=350)
-        # 지도는 html frame이라는걸 사용하면 될 것 같습니다.
+        #self.imgTempMap = Image.open("img/tempMap.png")
+        #self.photoTempMap = ImageTk.PhotoImage(self.imgTempMap)
+        #Label(self.window, image=self.photoTempMap).place(x=350, y=100)
+        #Label(self.window, text="지도", font=self.font3).place(x=550, y=350)
 
         self.MailIDinBox = StringVar()
-        self.eMailEntry = Entry(self.window,textvariable= self.MailIDinBox)
+        self.eMailEntry = Entry(self.window, textvariable=self.MailIDinBox)
         self.eMailEntry.place(x=10, y=160, width=200)
         Label(self.window, text="메일 주소 입력", font=self.font3).place(x=10, y=180)
         self.window.mainloop()
@@ -42,15 +45,20 @@ class GUI:
         self.photo2 = ImageTk.PhotoImage(self.img2)
         self.img3 = Image.open("img/mail.png")
         self.photo3 = ImageTk.PhotoImage(self.img3)
+        self.img4 = Image.open('img/map.png')
+        self.photo4=ImageTk.PhotoImage(self.img4)
         self.searchButton = Button(image=self.photo1, command=self.getStationList)
         self.specifiedSearchButton = Button(image=self.photo2, command=self.getSpecificInfo)
         self.sendMailButton = Button(image=self.photo3, command=self.SendMail)
+        self.openMapButton=Button(image=self.photo4,command=self.openMap)
         self.searchButton.place(x=10, y=50)
         Label(text="검색").place(x=30, y=130)
         self.specifiedSearchButton.place(x=10 + 64 + 15, y=50)
         Label(text="세부사항 보기").place(x=10 + 64 + 10, y=130)
         self.sendMailButton.place(x=10 + 128 + 35, y=50)
         Label(text="메일 보내기").place(x=10 + 128 + 35, y=130)
+        self.openMapButton.place(x=10+192+55,y=50)
+        Label(text='지도 보기').place(x=10+192+55,y=130)
 
     def initListBox(self):
         self.frame1 = Frame(self.window)
@@ -99,20 +107,20 @@ class GUI:
 
     def getStationList(self):
         # 리스트 박스의 curselection 메소드는 튜플의 형태로 반환함. 즉 첫번째 값에 인덱스 값이 들어있음!
-        self.stationListBox.delete(0, 'end')#해당 지역을 선택하면 기존의 충전소 정보가 싹 제거된다.
+        self.stationListBox.delete(0, 'end')  # 해당 지역을 선택하면 기존의 충전소 정보가 싹 제거된다.
         index = 0
         self.curSelectedLoc = self.locationListBox.curselection()[0]
         for i in xmlProcessing.chargingStations[self.curSelectedLoc]:
-            self.stationListBox.insert(index, i.stationName)#그 다음 해당 지역 충전소를 하나씩 리스트박스에 삽입한다.
+            self.stationListBox.insert(index, i.stationName)  # 그 다음 해당 지역 충전소를 하나씩 리스트박스에 삽입한다.
             index += 1
 
     def getSpecificInfo(self):
-        self.specificInfoList.delete(0, 'end')#세부 정보도 마찬가지로 기존의 리스트를 싹 비우고
+        self.specificInfoList.delete(0, 'end')  # 세부 정보도 마찬가지로 기존의 리스트를 싹 비우고
 
         tempList = list(xmlProcessing.chargingStations[self.curSelectedLoc])
 
         tempObj = tempList[self.stationListBox.curselection()[0]]
-        #정보를 하나씩 삽입한다.
+        # 정보를 하나씩 삽입한다.
         self.specificInfoList.insert(0, "주소: " + tempObj.address)
         self.specificInfoList.insert(1, "충전소ID: " + tempObj.stationID)
         self.specificInfoList.insert(2, "충전소 이름: " + tempObj.stationName)
@@ -120,6 +128,9 @@ class GUI:
         self.specificInfoList.insert(4, "충전소 위도: " + tempObj.lng)
         self.specificInfoList.insert(5, "충전기 타입: " + tempObj.type)
         self.specificInfoList.insert(6, "충전소 상태: " + tempObj.stat)
+        self.lat = tempObj.lat
+        self.lng = tempObj.lng
+        self.stnName=tempObj.stationName
 
     def SendMail(self):
         tempList = list(xmlProcessing.chargingStations[self.curSelectedLoc])
@@ -130,14 +141,22 @@ class GUI:
         HostMail.login('poryou66@gmail.com', 'ftpzebchlgswtqzh')
 
         # 세부사항 내용을 가져와서 집어 넣기
-        msg = MIMEText("주소: "+ tempObj.address + "\n 충전소ID: " + tempObj.stationID + "\n 충전소 이름: " + tempObj.stationName
-                       +"\n 충전기 타입: " + tempObj.type +"\n 충전소 상태: " + tempObj.stat)
-        msg['Subject'] = "****요청하신 "+ tempObj.stationName + "충전소의 정보 입니다.****"
+        msg = MIMEText("주소: " + tempObj.address + "\n 충전소ID: " + tempObj.stationID + "\n 충전소 이름: " + tempObj.stationName
+                       + "\n 충전기 타입: " + tempObj.type + "\n 충전소 상태: " + tempObj.stat)
+        msg['Subject'] = "****요청하신 " + tempObj.stationName + "충전소의 정보 입니다.****"
 
-        HostMail.sendmail("poryou66@gmail.com",self.MailIDinBox.get() , msg.as_string())
+        HostMail.sendmail("poryou66@gmail.com", self.MailIDinBox.get(), msg.as_string())
         HostMail.quit()
-        messagebox.showinfo( "메일 전송 완료",self.MailIDinBox.get() + "로 성공적으로 전송을 완료하였습니다!")
+        messagebox.showinfo("메일 전송 완료", self.MailIDinBox.get() + "로 성공적으로 전송을 완료하였습니다!")
 
+    def openMap(self):
+        # 위도 경도 지정
+        map_osm = folium.Map(location=[self.lng, self.lat], zoom_start=18)
+        # 마커 지정
+        folium.Marker([self.lng, self.lat], popup=self.stnName).add_to(map_osm)
+        # html 파일로 저장
+        map_osm.save('map.html')
+        webbrowser.open('map.html')
 
     def __del__(self):
         xmlProcessing.deleteDoc()
