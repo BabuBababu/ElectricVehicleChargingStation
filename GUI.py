@@ -137,8 +137,6 @@ class GUI:
     def getSpecificInfo(self):
         self.specificInfoList.delete(0, 'end')  # 세부 정보도 마찬가지로 기존의 리스트를 싹 비우고
 
-        tempList = list(xmlProcessing.chargingStations[self.curSelectedLoc])
-
         stnTuple=self.stationListBox.get(0,self.stationListBox.size()-1)
         for tempObj in xmlProcessing.chargingStations[self.curSelectedLoc]:
             if tempObj.stationName==stnTuple[self.stationListBox.curselection()[0]]:
