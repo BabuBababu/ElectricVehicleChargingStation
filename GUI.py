@@ -139,14 +139,26 @@ class GUI:
 
         tempList = list(xmlProcessing.chargingStations[self.curSelectedLoc])
 
-        print(self.stationListBox.get(0,3))
-        for obj in xmlProcessing.chargingStations[self.curSelectedLoc]:
-            if obj.stationName==self.stationListBox.curselection()[1]:
+        stnTuple=self.stationListBox.get(0,self.stationListBox.size()-1)
+        for tempObj in xmlProcessing.chargingStations[self.curSelectedLoc]:
+            if tempObj.stationName==stnTuple[self.stationListBox.curselection()[0]]:
+                self.specificInfoList.insert(0, "주소: " + tempObj.address)
+                self.specificInfoList.insert(1, "충전소ID: " + tempObj.stationID)
+                self.specificInfoList.insert(2, "충전소 이름: " + tempObj.stationName)
+                self.specificInfoList.insert(3, "충전소 경도: " + tempObj.lat)
+                self.specificInfoList.insert(4, "충전소 위도: " + tempObj.lng)
+                self.specificInfoList.insert(5, "충전기 타입: " + tempObj.type)
+                self.specificInfoList.insert(6, "충전소 상태: " + tempObj.stat)
+                self.lat = tempObj.lat
+                self.lng = tempObj.lng
+                self.stnName = tempObj.stationName
                 break
+        #새로운 코드. 해당 행정구역(은평구, 용산구 같은)의 충전소 리스트에서 내가 선택한 충전소 이름을 가지고 좀 더 큰 행정구역(서울특별시)의
+        # 충전소를 뒤지면서 이름이 동일한 충전소가있는지검색.
 
-        tempObj = tempList[self.stationListBox.curselection()[0]]
+        #tempObj = tempList[self.stationListBox.curselection()[0]]
         # 정보를 하나씩 삽입한다.
-        self.specificInfoList.insert(0, "주소: " + tempObj.address)
+        """self.specificInfoList.insert(0, "주소: " + tempObj.address)
         self.specificInfoList.insert(1, "충전소ID: " + tempObj.stationID)
         self.specificInfoList.insert(2, "충전소 이름: " + tempObj.stationName)
         self.specificInfoList.insert(3, "충전소 경도: " + tempObj.lat)
@@ -155,7 +167,8 @@ class GUI:
         self.specificInfoList.insert(6, "충전소 상태: " + tempObj.stat)
         self.lat = tempObj.lat
         self.lng = tempObj.lng
-        self.stnName = tempObj.stationName
+        self.stnName = tempObj.stationName"""
+        #이전 코드.
 
     def SendMail(self):
         tempList = list(xmlProcessing.chargingStations[self.curSelectedLoc])
