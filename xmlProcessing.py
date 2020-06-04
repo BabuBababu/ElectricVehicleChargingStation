@@ -7,6 +7,9 @@ import copy
 locations = ['서울특별시', '인천광역시', '대전광역시', '대구광역시', '울산광역시', '부산광역시', '광주광역시', '세종특별자치시',
              '경기도', '강원도', '충청북도', '충청남도', '전라북도', '전라남도', '경상북도', '경상남도', '제주특별자치도']
 
+AdmArea = {0:['종로구', '중구', '용산구', '성동구', '광진구', '동대문구', '중랑구', '성북구', '강북구', '도봉구', '노원구', '은평구,'
+                '서대문구', '마포구', '양천구', '강서구', '구로구', '금천구', '영등포구', '동작구', '관악구', '서초구', '강남구', '송파구', '강동구']}
+
 chargingStations = [set() for i in range(len(locations))]
 
 
@@ -24,7 +27,7 @@ class Data:
         elif type == "06":
             self.type = "DC 차데모+AC 3상+ DC콤보"
         else:
-            self.type="확인 불가능"
+            self.type = "확인 불가능"
         # 충전기 타입
         # (01:DC 차데모,
         # 03: DC 차데모+AC 3상,
@@ -41,7 +44,7 @@ class Data:
         elif stat == "5":
             self.stat = "점검중"
         else:
-            self.stat="확인불가능"
+            self.stat = "확인불가능"
         # 충전기
         # 1. 통신이상
         # 2. 충전대기
@@ -107,12 +110,14 @@ def printSeoulData():
     for i in chargingStations[0]:
         i.printData()
 
+
 def sortChargingStations():
     for i in range(len(chargingStations)):
-        chargingStations[i]=list(chargingStations[i])
+        chargingStations[i] = list(chargingStations[i])
     for i in range(len(chargingStations)):
         temp = spam.sortByName(chargingStations[i], len(chargingStations[i]))
         chargingStations[i] = copy.deepcopy(temp)
+
 
 def deleteDoc():
     global xmlDocument

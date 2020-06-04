@@ -8,6 +8,7 @@ from tkinter import messagebox
 import folium
 import webbrowser
 
+
 class GUI:
     def __init__(self):
         self.curSelectedLoc = None
@@ -16,7 +17,7 @@ class GUI:
         xmlProcessing.sortChargingStations()
         self.lat = 0
         self.lng = 0
-        self.stnName=""
+        self.stnName = ""
         self.window = Tk()
         self.window.title("전기자동차 공공충전소 현황")
         self.window.geometry("800x600")
@@ -27,10 +28,10 @@ class GUI:
         Label(self.window, text="전기자동차 공공충전소 현황", font=self.font1).pack()
         self.initButton()
         self.initListBox()
-        #self.imgTempMap = Image.open("img/tempMap.png")
-        #self.photoTempMap = ImageTk.PhotoImage(self.imgTempMap)
-        #Label(self.window, image=self.photoTempMap).place(x=350, y=100)
-        #Label(self.window, text="지도", font=self.font3).place(x=550, y=350)
+        # self.imgTempMap = Image.open("img/tempMap.png")
+        # self.photoTempMap = ImageTk.PhotoImage(self.imgTempMap)
+        # Label(self.window, image=self.photoTempMap).place(x=350, y=100)
+        # Label(self.window, text="지도", font=self.font3).place(x=550, y=350)
 
         self.MailIDinBox = StringVar()
         self.eMailEntry = Entry(self.window, textvariable=self.MailIDinBox)
@@ -46,19 +47,19 @@ class GUI:
         self.img3 = Image.open("img/mail.png")
         self.photo3 = ImageTk.PhotoImage(self.img3)
         self.img4 = Image.open('img/map.png')
-        self.photo4=ImageTk.PhotoImage(self.img4)
+        self.photo4 = ImageTk.PhotoImage(self.img4)
         self.searchButton = Button(image=self.photo1, command=self.getStationList)
         self.specifiedSearchButton = Button(image=self.photo2, command=self.getSpecificInfo)
         self.sendMailButton = Button(image=self.photo3, command=self.SendMail)
-        self.openMapButton=Button(image=self.photo4,command=self.openMap)
+        self.openMapButton = Button(image=self.photo4, command=self.openMap)
         self.searchButton.place(x=10, y=50)
         Label(text="검색").place(x=30, y=130)
         self.specifiedSearchButton.place(x=10 + 64 + 15, y=50)
         Label(text="세부사항 보기").place(x=10 + 64 + 10, y=130)
         self.sendMailButton.place(x=10 + 128 + 35, y=50)
         Label(text="메일 보내기").place(x=10 + 128 + 35, y=130)
-        self.openMapButton.place(x=10+192+55,y=50)
-        Label(text='지도 보기').place(x=10+192+55,y=130)
+        self.openMapButton.place(x=10 + 192 + 55, y=50)
+        Label(text='지도 보기').place(x=10 + 192 + 55, y=130)
 
     def initListBox(self):
         self.frame1 = Frame(self.window)
@@ -75,6 +76,8 @@ class GUI:
         for i in range(len(xmlProcessing.locations)):
             self.locationListBox.insert(i, xmlProcessing.locations[i])
         Label(self.window, text="지역 리스트", font=self.font3).place(x=40, y=360)
+
+        self.locationListBox.bind('<Double-Button-1>', self.selectingLocation)  # 마우스클릭을 바인드한다.
         # 여기까지 지역 리스트 만드는 코드(서울 ~ 제주도까지 하나씩 집어넣는다.)
 
         self.frame2 = Frame(self.window)
@@ -105,19 +108,41 @@ class GUI:
         Label(self.window, text="충전소 세부사항", font=self.font3).place(x=500, y=550)
         # 여기까지 스테이션의 세부사항 리스트.
 
+        self.frame4 = Frame(self.window)
+        self.frame4.place(x=200, y=220)
+        self.admListBox = Listbox(self.frame4, selectmode='extended',
+                                  height=7, font=self.font2,
+                                  relief='ridge', borderwidth=7)
+        self.admListBox.pack(side="left", fill="y")
+
+        self.scrollbarWithSpecificList = Scrollbar(self.frame4, orient="vertical")
+        self.scrollbarWithSpecificList.config(command=self.admListBox.yview)
+        self.scrollbarWithSpecificList.pack(side="right", fill="y")
+        self.admListBox.config(yscrollcommand=self.scrollbarWithSpecificList.set)
+        Label(self.window, text="행정구역 리스트", font=self.font3).place(x=220, y=360)
+        # 여기까지 지역 스테이션 리스트박스 만들기
+
     def getStationList(self):
         # 리스트 박스의 curselection 메소드는 튜플의 형태로 반환함. 즉 첫번째 값에 인덱스 값이 들어있음!
         self.stationListBox.delete(0, 'end')  # 해당 지역을 선택하면 기존의 충전소 정보가 싹 제거된다.
         index = 0
-        self.curSelectedLoc = self.locationListBox.curselection()[0]
+        # self.curSelectedLoc = self.locationListBox.curselection()[0]
+        selectedAdmLoc = self.admListBox.curselection()[0]
+
         for i in xmlProcessing.chargingStations[self.curSelectedLoc]:
-            self.stationListBox.insert(index, i.stationName)  # 그 다음 해당 지역 충전소를 하나씩 리스트박스에 삽입한다.
+            if xmlProcessing.AdmArea[self.curSelectedLoc][selectedAdmLoc] in i.address:#객체 행정구역정보가 내가 선택한 행정구역 정보와 일치하는가
+                self.stationListBox.insert(index, i.stationName)  # 그 다음 해당 지역 충전소를 하나씩 리스트박스에 삽입한다.
             index += 1
 
     def getSpecificInfo(self):
         self.specificInfoList.delete(0, 'end')  # 세부 정보도 마찬가지로 기존의 리스트를 싹 비우고
 
         tempList = list(xmlProcessing.chargingStations[self.curSelectedLoc])
+
+        print(self.stationListBox.get(0,3))
+        for obj in xmlProcessing.chargingStations[self.curSelectedLoc]:
+            if obj.stationName==self.stationListBox.curselection()[1]:
+                break
 
         tempObj = tempList[self.stationListBox.curselection()[0]]
         # 정보를 하나씩 삽입한다.
@@ -130,7 +155,7 @@ class GUI:
         self.specificInfoList.insert(6, "충전소 상태: " + tempObj.stat)
         self.lat = tempObj.lat
         self.lng = tempObj.lng
-        self.stnName=tempObj.stationName
+        self.stnName = tempObj.stationName
 
     def SendMail(self):
         tempList = list(xmlProcessing.chargingStations[self.curSelectedLoc])
@@ -157,6 +182,16 @@ class GUI:
         # html 파일로 저장
         map_osm.save('map.html')
         webbrowser.open('map.html')
+
+    def selectingLocation(self, event):
+        print("you selected area")
+        # 리스트 박스의 curselection 메소드는 튜플의 형태로 반환함. 즉 첫번째 값에 인덱스 값이 들어있음!
+        self.admListBox.delete(0, 'end')  # 해당 지역을 선택하면 기존의 충전소 정보가 싹 제거된다.
+        index = 0
+        self.curSelectedLoc = self.locationListBox.curselection()[0]
+        for i in xmlProcessing.AdmArea[self.curSelectedLoc]:
+            self.admListBox.insert(index, i)  # 그 다음 해당 지역 충전소를 하나씩 리스트박스에 삽입한다.
+            index += 1
 
     def __del__(self):
         xmlProcessing.deleteDoc()
