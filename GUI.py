@@ -25,7 +25,11 @@ class GUI:
         self.font2 = Font(family="Arial", size=10)
         self.font3 = Font(family="굴림", size=12)
 
-        Label(self.window, text="전기자동차 공공충전소 현황", font=self.font1).pack()
+
+        self.img0 = PhotoImage(file = "img/background.png")
+        label = Label(self.window, image = self.img0)
+        label.place(x=0,y=0)
+        label.pack()
         self.initButton()
         self.initListBox()
         # self.imgTempMap = Image.open("img/tempMap.png")
@@ -36,7 +40,7 @@ class GUI:
         self.MailIDinBox = StringVar()
         self.eMailEntry = Entry(self.window, textvariable=self.MailIDinBox)
         self.eMailEntry.place(x=10, y=160, width=200)
-        Label(self.window, text="메일 주소 입력", font=self.font3).place(x=10, y=180)
+
         self.window.mainloop()
 
     def initButton(self):
@@ -53,13 +57,13 @@ class GUI:
         self.sendMailButton = Button(image=self.photo3, command=self.SendMail)
         self.openMapButton = Button(image=self.photo4, command=self.openMap)
         self.searchButton.place(x=10, y=50)
-        Label(text="검색").place(x=30, y=130)
+
         self.specifiedSearchButton.place(x=10 + 64 + 15, y=50)
-        Label(text="세부사항 보기").place(x=10 + 64 + 10, y=130)
+
         self.sendMailButton.place(x=10 + 128 + 35, y=50)
-        Label(text="메일 보내기").place(x=10 + 128 + 35, y=130)
+
         self.openMapButton.place(x=10 + 192 + 55, y=50)
-        Label(text='지도 보기').place(x=10 + 192 + 55, y=130)
+
 
     def initListBox(self):
         self.frame1 = Frame(self.window)
@@ -75,7 +79,6 @@ class GUI:
 
         for i in range(len(xmlProcessing.locations)):
             self.locationListBox.insert(i, xmlProcessing.locations[i])
-        Label(self.window, text="지역 리스트", font=self.font3).place(x=40, y=360)
 
         self.locationListBox.bind('<Double-Button-1>', self.selectingLocation)  # 마우스클릭을 바인드한다.
         # 여기까지 지역 리스트 만드는 코드(서울 ~ 제주도까지 하나씩 집어넣는다.)
@@ -91,7 +94,6 @@ class GUI:
         self.scrollbarWithSpecificList.config(command=self.stationListBox.yview)
         self.scrollbarWithSpecificList.pack(side="right", fill="y")
         self.stationListBox.config(yscrollcommand=self.scrollbarWithSpecificList.set)
-        Label(self.window, text="지역 내 충전소 리스트", font=self.font3).place(x=70, y=550)
         # 여기까지 지역 스테이션 리스트박스 만들기
 
         self.frame3 = Frame(self.window)
@@ -105,7 +107,6 @@ class GUI:
         self.scrollbarWithSpecificInfoList.config(command=self.specificInfoList.yview)
         self.scrollbarWithSpecificInfoList.pack(side="right", fill="y")
         self.specificInfoList.config(yscrollcommand=self.scrollbarWithSpecificInfoList.set)
-        Label(self.window, text="충전소 세부사항", font=self.font3).place(x=500, y=550)
         # 여기까지 스테이션의 세부사항 리스트.
 
         self.frame4 = Frame(self.window)
@@ -119,7 +120,6 @@ class GUI:
         self.scrollbarWithSpecificList.config(command=self.admListBox.yview)
         self.scrollbarWithSpecificList.pack(side="right", fill="y")
         self.admListBox.config(yscrollcommand=self.scrollbarWithSpecificList.set)
-        Label(self.window, text="행정구역 리스트", font=self.font3).place(x=220, y=360)
         # 여기까지 지역 스테이션 리스트박스 만들기
 
     def getStationList(self):
