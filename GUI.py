@@ -80,7 +80,7 @@ class GUI:
         for i in range(len(xmlProcessing.locations)):
             self.locationListBox.insert(i, xmlProcessing.locations[i])
 
-        self.locationListBox.bind('<Double-Button-1>', self.selectingLocation)  # 마우스클릭을 바인드한다.
+        self.locationListBox.bind('<Button-1>', self.selectingLocation)  # 마우스클릭을 바인드한다.
         # 여기까지 지역 리스트 만드는 코드(서울 ~ 제주도까지 하나씩 집어넣는다.)
 
         self.frame2 = Frame(self.window)
