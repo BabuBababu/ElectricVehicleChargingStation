@@ -238,12 +238,34 @@ class GUI:
         #            break
         heightPerCounts=160//max(counts)
 
-        for i in range(len(xmlProcessing.AdmArea[self.curSelectedLoc])):
-            self.canvas.create_rectangle(5 + i * perWidth, 160, i * perWidth + perWidth, 160-heightPerCounts*counts[i], fill=self.graphColor[i])
-            if i % 2==0 :
-                self.canvas.create_text(int(perWidth/1.5)+i*perWidth,180+5,text=str(counts[i]),font=("Purisa", int(perWidth/1.5)))
-            else:
-                self.canvas.create_text(int(perWidth / 1.5) + i * perWidth, 180, text=str(counts[i]),  font=("Purisa", int(perWidth / 1.5)))
+        if len(xmlProcessing.AdmArea[self.curSelectedLoc]) <3:
+            for i in range(len(xmlProcessing.AdmArea[self.curSelectedLoc])):
+                self.canvas.create_rectangle(5 + i * perWidth, 160, i * perWidth + perWidth,
+                                             160 - heightPerCounts * counts[i], fill=self.graphColor[i])
+                if i % 2 == 0:
+                    self.canvas.create_text(int(perWidth / 1.5) + i * perWidth-40, 180, text=str(counts[i]),
+                                            font=("Purisa", int(perWidth / 8)), fill='saddle brown')
+                else:
+                    self.canvas.create_text(int(perWidth / 1.5) + i * perWidth-40, 180, text=str(counts[i]),
+                                            font=("Purisa", int(perWidth / 8)), fill='steel blue3')
+
+        elif len(xmlProcessing.AdmArea[self.curSelectedLoc]) <7:
+            for i in range(len(xmlProcessing.AdmArea[self.curSelectedLoc])):
+                self.canvas.create_rectangle(5 + i * perWidth, 160, i * perWidth + perWidth,
+                                             160 - heightPerCounts * counts[i], fill=self.graphColor[i])
+                if i % 2 == 0:
+                    self.canvas.create_text(int(perWidth / 1.5) + i * perWidth-10, 180, text=str(counts[i]),
+                                            font=("Purisa", int(perWidth / 4)), fill='saddle brown')
+                else:
+                    self.canvas.create_text(int(perWidth / 1.5) + i * perWidth-10, 180, text=str(counts[i]),
+                                            font=("Purisa", int(perWidth / 4)), fill='steel blue3')
+        else:
+            for i in range(len(xmlProcessing.AdmArea[self.curSelectedLoc])):
+                self.canvas.create_rectangle(5 + i * perWidth, 160, i * perWidth + perWidth, 160-heightPerCounts*counts[i], fill=self.graphColor[i])
+                if i % 2==0 :
+                    self.canvas.create_text(int(perWidth/1.5)+i*perWidth,180,text=str(counts[i]),font=("Purisa", int(perWidth/1.5)),fill='saddle brown')
+                else:
+                    self.canvas.create_text(int(perWidth / 1.5) + i * perWidth, 180, text=str(counts[i]),  font=("Purisa", int(perWidth / 1.5)), fill='steel blue3')
 
     def __del__(self):
         xmlProcessing.deleteDoc()
