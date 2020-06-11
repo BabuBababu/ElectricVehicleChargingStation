@@ -12,6 +12,15 @@ import telegram
 
 class GUI:
     def __init__(self):
+        self.graphColor=['dark sea green', 'sea green', 'medium sea green', 'light sea green', 'pale green', 'spring green',
+    'lawn green', 'medium spring green', 'green yellow', 'lime green', 'yellow green',
+    'forest green', 'olive drab', 'dark khaki', 'khaki', 'pale goldenrod', 'light goldenrod yellow',
+    'light yellow', 'yellow', 'gold', 'light goldenrod', 'goldenrod', 'dark goldenrod', 'rosy brown',
+    'indian red', 'saddle brown', 'sandy brown',
+    'dark salmon', 'salmon', 'light salmon', 'orange', 'dark orange',
+    'coral', 'light coral', 'tomato', 'orange red', 'red', 'hot pink', 'deep pink', 'pink', 'light pink',
+    'pale violet red', 'maroon', 'medium violet red', 'violet red',
+    'medium orchid']
         self.curSelectedLoc = None
         xmlProcessing.createXmlDoc()
         xmlProcessing.parseStationInfo()
@@ -218,6 +227,12 @@ class GUI:
         for i in xmlProcessing.AdmArea[self.curSelectedLoc]:
             self.admListBox.insert(index, i)  # 그 다음 해당 지역 충전소를 하나씩 리스트박스에 삽입한다.
             index += 1
+        perWidth = 380 // len(xmlProcessing.AdmArea[self.curSelectedLoc])
+        self.canvas.delete("all")
+
+        for i in range(len(xmlProcessing.AdmArea[self.curSelectedLoc])):
+            self.canvas.create_rectangle(5+i*perWidth,200,i*perWidth+perWidth,50,fill=self.graphColor[i])
+
 
     def __del__(self):
         xmlProcessing.deleteDoc()
