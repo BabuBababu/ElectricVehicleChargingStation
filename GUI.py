@@ -230,9 +230,20 @@ class GUI:
         perWidth = 380 // len(xmlProcessing.AdmArea[self.curSelectedLoc])
         self.canvas.delete("all")
 
-        for i in range(len(xmlProcessing.AdmArea[self.curSelectedLoc])):
-            self.canvas.create_rectangle(5+i*perWidth,200,i*perWidth+perWidth,50,fill=self.graphColor[i])
+        counts=[0]*len(xmlProcessing.AdmArea[self.curSelectedLoc])
+        for data in xmlProcessing.chargingStations[self.curSelectedLoc]:
+            for i in range(len(xmlProcessing.AdmArea[self.curSelectedLoc])):
+                if xmlProcessing.AdmArea[self.curSelectedLoc][i] in data.address:
+                    counts[i]+=1
+        #            break
+        heightPerCounts=160//max(counts)
 
+        for i in range(len(xmlProcessing.AdmArea[self.curSelectedLoc])):
+            self.canvas.create_rectangle(5 + i * perWidth, 160, i * perWidth + perWidth, 160-heightPerCounts*counts[i], fill=self.graphColor[i])
+            if i % 2==0 :
+                self.canvas.create_text(int(perWidth/1.5)+i*perWidth,180+5,text=str(counts[i]),font=("Purisa", int(perWidth/1.5)))
+            else:
+                self.canvas.create_text(int(perWidth / 1.5) + i * perWidth, 180, text=str(counts[i]),  font=("Purisa", int(perWidth / 1.5)))
 
     def __del__(self):
         xmlProcessing.deleteDoc()
