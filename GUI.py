@@ -7,6 +7,7 @@ from email.mime.text import MIMEText
 from tkinter import messagebox
 import folium
 import webbrowser
+import telegram
 
 
 class GUI:
@@ -15,6 +16,7 @@ class GUI:
         xmlProcessing.createXmlDoc()
         xmlProcessing.parseStationInfo()
         xmlProcessing.sortChargingStations()
+        telegram.telegramBot()
         self.lat = 0
         self.lng = 0
         self.stnName = ""
@@ -26,10 +28,12 @@ class GUI:
         self.font3 = Font(family="굴림", size=12)
 
 
+
         self.img0 = PhotoImage(file = "img/background.png")
         label = Label(self.window, image = self.img0)
         label.place(x=0,y=0)
         label.pack()
+        self.canvas = Canvas(self.window, width = 380 ,height = 200 ,bg='white')
         self.initButton()
         self.initListBox()
         # self.imgTempMap = Image.open("img/tempMap.png")
@@ -40,7 +44,7 @@ class GUI:
         self.MailIDinBox = StringVar()
         self.eMailEntry = Entry(self.window, textvariable=self.MailIDinBox)
         self.eMailEntry.place(x=10, y=160, width=200)
-
+        self.canvas.place(x=10 + 192 + 55 + 128, y=150)
         self.window.mainloop()
 
     def initButton(self):
@@ -56,13 +60,14 @@ class GUI:
         self.specifiedSearchButton = Button(image=self.photo2, command=self.getSpecificInfo)
         self.sendMailButton = Button(image=self.photo3, command=self.SendMail)
         self.openMapButton = Button(image=self.photo4, command=self.openMap)
-        self.searchButton.place(x=10, y=50)
 
+        self.searchButton.place(x=10, y=50)
         self.specifiedSearchButton.place(x=10 + 64 + 15, y=50)
 
         self.sendMailButton.place(x=10 + 128 + 35, y=50)
 
         self.openMapButton.place(x=10 + 192 + 55, y=50)
+
 
 
     def initListBox(self):
@@ -80,7 +85,7 @@ class GUI:
         for i in range(len(xmlProcessing.locations)):
             self.locationListBox.insert(i, xmlProcessing.locations[i])
 
-        self.locationListBox.bind('<Button-1>', self.selectingLocation)  # 마우스클릭을 바인드한다.
+        self.locationListBox.bind('<Double-Button-1>', self.selectingLocation)  # 마우스클릭을 바인드한다.
         # 여기까지 지역 리스트 만드는 코드(서울 ~ 제주도까지 하나씩 집어넣는다.)
 
         self.frame2 = Frame(self.window)
