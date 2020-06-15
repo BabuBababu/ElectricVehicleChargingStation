@@ -42,7 +42,7 @@ class GUI:
         label = Label(self.window, image = self.img0)
         label.place(x=0,y=0)
         label.pack()
-        self.canvas = Canvas(self.window, width = 380 ,height = 200 ,bg='white')
+        self.canvas = Canvas(self.window, width = 380 ,height = 200 ,bg='gray')
         self.initButton()
         self.initListBox()
         # self.imgTempMap = Image.open("img/tempMap.png")
@@ -84,7 +84,7 @@ class GUI:
         self.frame1.place(x=10, y=220)
         self.locationListBox = Listbox(self.frame1, selectmode='extended',
                                        height=7, font=self.font2,
-                                       relief='ridge', borderwidth=7)
+                                       relief='ridge', borderwidth=7,bg='gray')
         self.locationListBox.pack(side="left", fill="y")
         self.scrollbarWithLocList = Scrollbar(self.frame1, orient="vertical")
         self.scrollbarWithLocList.config(command=self.locationListBox.yview)
@@ -101,7 +101,7 @@ class GUI:
         self.frame2.place(x=10, y=400)
         self.stationListBox = Listbox(self.frame2, selectmode='extended',
                                       height=7, width=42, font=self.font2,
-                                      relief='ridge', borderwidth=7)
+                                      relief='ridge', borderwidth=7,bg='gray')
         self.stationListBox.pack(side="left", fill="y")
 
         self.scrollbarWithSpecificList = Scrollbar(self.frame2, orient="vertical")
@@ -114,7 +114,7 @@ class GUI:
         self.frame3.place(x=350, y=400)
         self.specificInfoList = Listbox(self.frame3, selectmode='extended',
                                         height=7, width=55, font=self.font2,
-                                        relief='ridge', borderwidth=7)
+                                        relief='ridge', borderwidth=7,bg='gray')
         self.specificInfoList.pack(side="left", fill="y")
 
         self.scrollbarWithSpecificInfoList = Scrollbar(self.frame3, orient="vertical")
@@ -127,7 +127,7 @@ class GUI:
         self.frame4.place(x=200, y=220)
         self.admListBox = Listbox(self.frame4, selectmode='extended',
                                   height=7, font=self.font2,
-                                  relief='ridge', borderwidth=7)
+                                  relief='ridge', borderwidth=7,bg='gray')
         self.admListBox.pack(side="left", fill="y")
 
         self.scrollbarWithSpecificList = Scrollbar(self.frame4, orient="vertical")
@@ -247,7 +247,7 @@ class GUI:
                                             font=("Purisa", int(perWidth / 8)), fill='saddle brown')
                 else:
                     self.canvas.create_text(int(perWidth / 1.5) + i * perWidth-40, 180, text=str(counts[i]),
-                                            font=("Purisa", int(perWidth / 8)), fill='steel blue3')
+                                            font=("Purisa", int(perWidth / 8)), fill='black')
 
         elif len(xmlProcessing.AdmArea[self.curSelectedLoc]) <7:
             for i in range(len(xmlProcessing.AdmArea[self.curSelectedLoc])):
@@ -258,14 +258,14 @@ class GUI:
                                             font=("Purisa", int(perWidth / 4)), fill='saddle brown')
                 else:
                     self.canvas.create_text(int(perWidth / 1.5) + i * perWidth-10, 180, text=str(counts[i]),
-                                            font=("Purisa", int(perWidth / 4)), fill='steel blue3')
+                                            font=("Purisa", int(perWidth / 4)), fill='black')
         else:
             for i in range(len(xmlProcessing.AdmArea[self.curSelectedLoc])):
                 self.canvas.create_rectangle(5 + i * perWidth, 160, i * perWidth + perWidth, 160-heightPerCounts*counts[i], fill=self.graphColor[i])
                 if i % 2==0 :
                     self.canvas.create_text(int(perWidth/1.5)+i*perWidth,180,text=str(counts[i]),font=("Purisa", int(perWidth/1.5)),fill='saddle brown')
                 else:
-                    self.canvas.create_text(int(perWidth / 1.5) + i * perWidth, 180, text=str(counts[i]),  font=("Purisa", int(perWidth / 1.5)), fill='steel blue3')
+                    self.canvas.create_text(int(perWidth / 1.5) + i * perWidth, 180, text=str(counts[i]),  font=("Purisa", int(perWidth / 1.5)), fill='black')
 
     def __del__(self):
         xmlProcessing.deleteDoc()
